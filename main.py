@@ -3,6 +3,7 @@ from getpass import getpass
 from urllib.parse import urlencode, parse_qs, urljoin
 from pathlib import Path
 import re
+from time import sleep
 
 
 import pyunpack
@@ -97,6 +98,8 @@ def download(s: Session, homework: dict, directory: Path):
     directory.mkdir(parents=True, exist_ok=True)
     for student in tqdm(students):
         base_url = 'https://learn.tsinghua.edu.cn/b/wlxt/kczy/xszy/teacher/downloadFile'
+        if not student['zyfjid']:
+            continue
         url = f'{base_url}/{homework["wlkcid"]}/{student["zyfjid"]}'
         headers = s.head(url).headers
         raw_filename = re.search(
@@ -106,6 +109,7 @@ def download(s: Session, homework: dict, directory: Path):
         path = directory / filename
         size = int(headers['Content-Length'])
         if path.is_file() and path.stat().st_size == size:
+            sleep(0.01)
             continue
         response = s.get(url, stream=True)
         assert response.status_code == 200
