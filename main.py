@@ -113,7 +113,7 @@ def download(s: Session, homework: dict, directory: Path):
             for chunk in tqdm(response.iter_content(32768)):
                 if chunk:
                     file.write(chunk)
-        if path.suffix in ['.rar', '.zip', '7z']:
+        if path.suffix in ['.rar', '.zip', '.7z']:
             arch = pyunpack.Archive(path)
             extract_to = directory / path.stem
             extract_to.mkdir(exist_ok=True)
